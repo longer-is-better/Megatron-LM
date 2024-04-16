@@ -20,8 +20,13 @@ import torch
 
 from megatron.core import mpu, tensor_parallel
 from megatron.core.utils import get_model_config, StragglerDetector
-from megatron.training.checkpointing import load_checkpoint
-from megatron.training.checkpointing import save_checkpoint
+# from megatron.training.checkpointing import load_checkpoint
+# from megatron.training.checkpointing import save_checkpoint
+from dlrover.trainer.torch.flash_checkpoint.megatron import (
+    save_checkpoint,
+    load_checkpoint,
+    StorageType,
+)
 from megatron.legacy.model import Float16Module
 from megatron.core.distributed import DistributedDataParallelConfig
 from megatron.core.distributed import DistributedDataParallel as DDP
@@ -202,6 +207,11 @@ def pretrain(train_valid_test_dataset_provider,
     initialize_megatron(extra_args_provider=extra_args_provider,
                         args_defaults=args_defaults)
 
+    # if torch.distributed.get_rank() == 0:
+    #     import debugpy
+    #     debugpy.listen(('0.0.0.0', 5678))
+    #     print("waiting for attach")
+    #     debugpy.wait_for_client()
     args = get_args()
     timers = get_timers()
 
